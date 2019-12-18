@@ -4586,28 +4586,38 @@ int32 field::adjust_step(uint16 step) {
 	case 1: {
 		//win check
 		uint32 winp = 5, rea = 1;
-		if(player[0].lp <= 0 && player[1].lp > 0) {
+		if(player[0].lp <= 0 && player[1].lp > 0 && !is_player_affected_by_effect(0, EFFECT_CANNOT_LOSE_LP)) {
 			winp = 1;
 			rea = 1;
 		}
-		if(core.overdraw[0] && !core.overdraw[1]) {
+		if(core.overdraw[0] && !core.overdraw[1] && !is_player_affected_by_effect(0, EFFECT_CANNOT_LOSE_DECK)) {
 			winp = 1;
 			rea = 2;
 		}
-		if(player[1].lp <= 0 && player[0].lp > 0) {
+		if(player[1].lp <= 0 && player[0].lp > 0 && !is_player_affected_by_effect(1, EFFECT_CANNOT_LOSE_LP)) {
 			winp = 0;
 			rea = 1;
 		}
-		if(core.overdraw[1] && !core.overdraw[0]) {
+		if(core.overdraw[1] && !core.overdraw[0] && !is_player_affected_by_effect(1, EFFECT_CANNOT_LOSE_DECK)) {
 			winp = 0;
 			rea = 2;
 		}
-		if(player[1].lp <= 0 && player[0].lp <= 0) {
-			winp = PLAYER_NONE;
+		if(player[1].lp <= 0 && player[0].lp <= 0 && !(is_player_affected_by_effect(0, EFFECT_CANNOT_LOSE_LP) && is_player_affected_by_effect(1, EFFECT_CANNOT_LOSE_LP))) {
+				if (is_player_affected_by_effect(0, EFFECT_CANNOT_LOSE_LP))
+					winp = 0;
+				else if (is_player_affected_by_effect(1, EFFECT_CANNOT_LOSE_LP))
+					winp = 1;
+				else
+					winp = PLAYER_NONE;) {
 			rea = 1;
 		}
-		if(core.overdraw[1] && core.overdraw[0]) {
-			winp = PLAYER_NONE;
+		if(core.overdraw[1] && core.overdraw[0] && !(is_player_affected_by_effect(0, EFFECT_CANNOT_LOSE_DECK) && is_player_affected_by_effect(1, EFFECT_CANNOT_LOSE_DECK))) {
+				if (is_player_affected_by_effect(0, EFFECT_CANNOT_LOSE_DECK))
+					winp = 0;
+				else if (is_player_affected_by_effect(1, EFFECT_CANNOT_LOSE_DECK))
+					winp = 1;
+				else
+					winp = PLAYER_NONE;) {
 			rea = 2;
 		}
 		if(winp != 5) {
